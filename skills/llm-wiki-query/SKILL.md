@@ -1,50 +1,50 @@
 ---
 name: llm-wiki:query
-description: Query and chat with LLM Wiki knowledge base
+description: 查询 LLM Wiki 知识库并对话
 ---
 
 # llm-wiki:query
 
-Query the wiki and generate answers.
+查询维基并生成答案。
 
-## Usage
+## 用法
 
-`/wiki query <question>`
+`/wiki query <问题>`
 
-Or simply ask a question directly - the skill detects query intent.
+或直接提问 - skill 会自动识别查询意图。
 
-## Pre-requisites
+## 前置条件
 
-Wiki must have content (at least one ingested document).
+维基已有内容（至少已摄取一篇文档）。
 
-## Process
+## 流程
 
-1. **Find relevant pages**
-   - Read index.md to locate relevant sections
-   - Identify which entities/concepts/summaries relate to the question
+1. **查找相关页面**
+   - 读取 index.md 定位相关章节
+   - 识别哪些实体/概念/摘要与问题相关
 
-2. **Read relevant content**
-   - Load referenced pages
-   - Synthesize information
+2. **读取相关内容**
+   - 加载引用的页面
+   - 综合信息
 
-3. **Generate answer**
-   - Answer in Markdown
-   - Include citations: [[pagename]]
-   - Offer to save exploration results back to wiki
+3. **生成答案**
+   - 用 Markdown 回答
+   - 包含引用：[[页面名]]
+   - 询问是否将探索结果存回维基
 
-4. **Optional: Save to wiki**
-   - If user wants, create new page in appropriate directory
-   - Update index.md
-   - Record to log.md
+4. **可选：存回维基**
+   - 如果用户愿意，在适当目录创建新页面
+   - 更新 index.md
+   - 记录到 log.md
 
-## Output Formats
+## 输出格式
 
-- Markdown (default)
-- Comparison tables using `||` syntax
-- Summary lists
+- Markdown（默认）
+- 对比表（使用 `||` 语法）
+- 摘要列表
 
-## Response Rules
+## 响应规则
 
-- MUST cite relevant pages [[pagename]]
-- Encourage saving useful exploration results
-- If wiki is empty, prompt to ingest documents first
+- 必须引用相关页面 [[页面名]]
+- 鼓励将有用的探索结果存回维基
+- 如果维基为空，提示先摄取文档

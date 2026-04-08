@@ -1,30 +1,30 @@
 ---
 name: llm-wiki:schema
-description: Manage LLM Wiki behavior rules (CLAUDE.md)
+description: 管理 LLM Wiki 行为规范（CLAUDE.md）
 ---
 
 # llm-wiki:schema
 
-Manage the wiki's behavior rules.
+管理维基的行为规范。
 
-## Usage
+## 用法
 
-- `/wiki schema show` - Display current schema
-- `/wiki schema edit` - Edit schema (opens in editor)
+- `/wiki schema show` - 显示当前规范
+- `/wiki schema edit` - 编辑规范（在编辑器中打开）
 
-## Pre-requisites
+## 前置条件
 
-Wiki must be initialized.
+维基已初始化。
 
-## Commands
+## 命令
 
 ### show
-Display current schema/CLAUDE.md content.
+显示当前 schema/CLAUDE.md 内容。
 
 ### edit
-Open schema/CLAUDE.md in editor for modification.
-After save, confirm the schema is valid.
+在编辑器中打开 schema/CLAUDE.md 进行修改。
+保存后确认规范有效。
 
-## Schema Location
+## 规范位置
 
-`<wiki-path>/schema/CLAUDE.md`
+`<维基路径>/schema/CLAUDE.md`

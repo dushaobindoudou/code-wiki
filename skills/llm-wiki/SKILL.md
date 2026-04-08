@@ -1,36 +1,36 @@
 ---
 name: llm-wiki
-description: LLM Wiki - personal/team knowledge base. Sub-commands: init, ingest, query, lint, schema.
+description: LLM Wiki - 个人/团队知识库。子命令：init, ingest, query, lint, schema。
 ---
 
 # LLM Wiki Skill
 
-A personal/team knowledge base built on Karpathy's LLM Wiki architecture.
+基于 Karpathy 的 LLM Wiki 架构构建的个人/团队知识库。
 
-## Commands
+## 命令
 
-| Command | Sub-skill | Description |
-|---------|-----------|-------------|
-| `/wiki init` | llm-wiki:init | Initialize wiki at ~/.openwiki |
-| `/wiki ingest <file>` | llm-wiki:ingest | Ingest a document into wiki |
-| `/wiki query <question>` | llm-wiki:query | Query the wiki |
-| `/wiki lint` | llm-wiki:lint | Health check |
-| `/wiki status` | (built-in) | Show wiki status |
-| `/wiki help` | (built-in) | Show help |
+| 命令 | 子 Skill | 说明 |
+|------|----------|------|
+| `/wiki init` | llm-wiki:init | 初始化维基到 ~/.openwiki |
+| `/wiki ingest <文件>` | llm-wiki:ingest | 摄取文档到维基 |
+| `/wiki query <问题>` | llm-wiki:query | 查询维基 |
+| `/wiki lint` | llm-wiki:lint | 健康检查 |
+| `/wiki status` | (内置) | 显示维基状态 |
+| `/wiki help` | (内置) | 显示帮助 |
 
-## Trigger Patterns
+## 触发模式
 
 - "初始化维基" → llm-wiki:init
 - "摄取" → llm-wiki:ingest
 - "查询" / "分析" → llm-wiki:query
 - "检查" / "健康" → llm-wiki:lint
 
-## Wiki Location
+## 维基位置
 
-Default: `~/.openwiki`
-Override: `/wiki init --path <directory>`
+默认：`~/.openwiki`
+自定义：`/wiki init --path <目录>`
 
-## Architecture
+## 架构
 
-This skill routes commands to sub-skills:
-- Use Skill tool to invoke: `Skill(skill="llm-wiki:init")`, `Skill(skill="llm-wiki:ingest")`, etc.
+此 skill 负责将命令路由到子 skill：
+- 使用 Skill 工具调用：`Skill(skill="llm-wiki:init")`、`Skill(skill="llm-wiki:ingest")` 等

@@ -1,56 +1,56 @@
 ---
 name: llm-wiki:ingest
-description: Ingest source documents into LLM Wiki
+description: 将源文档摄取到 LLM Wiki
 ---
 
 # llm-wiki:ingest
 
-Ingest source documents into the wiki.
+将源文档摄取到维基。
 
-## Usage
+## 用法
 
-`/wiki ingest <file>`
+`/wiki ingest <文件>`
 
-- Supported formats: TXT, MD (Markdown)
+- 支持格式：TXT、MD（Markdown）
 
-## Pre-requisites
+## 前置条件
 
-1. Wiki must be initialized (check if ~/.openwiki or --path exists)
-2. Source file must exist and be readable
+1. 维基已初始化（检查 ~/.openwiki 或 --path 是否存在）
+2. 源文件存在且可读
 
-## Process
+## 流程
 
-1. **Validate wiki exists**
-   - Check ~/.openwiki or --path argument
-   - If not found, prompt user to run `/wiki init` first
+1. **验证维基存在**
+   - 检查 ~/.openwiki 或 --path 参数
+   - 如果不存在，提示用户先运行 `/wiki init`
 
-2. **Read source document**
-   - Read file content
-   - Extract: title, content, format
+2. **读取源文档**
+   - 读取文件内容
+   - 提取：标题、内容、格式
 
-3. **Generate summary page**
-   - Create: `wiki/summaries/<slug>-<date>.md`
-   - Include: source file, ingest date, key points (3-5 bullets)
+3. **生成摘要页**
+   - 创建：`wiki/summaries/<slug>-<日期>.md`
+   - 包含：源文件、摄取日期、要点（3-5 条）
 
-4. **Extract and update entities**
-   - Identify entities (people, places, organizations)
-   - For each entity:
-     - If exists: append new information
-     - If not: create new page in `wiki/entities/`
+4. **提取并更新实体**
+   - 识别实体（人物、地点、组织）
+   - 每个实体：
+     - 已存在：追加新信息
+     - 不存在：在 `wiki/entities/` 创建新页面
 
-5. **Extract and update concepts**
-   - Identify concepts (topics, theories, ideas)
-   - For each concept:
-     - If exists: append new information
-     - If not: create new page in `wiki/concepts/`
+5. **提取并更新概念**
+   - 识别概念（主题、理论、想法）
+   - 每个概念：
+     - 已存在：追加新信息
+     - 不存在：在 `wiki/concepts/` 创建新页面
 
-6. **Update index.md**
-   - Add new summaries, entities, concepts to index
+6. **更新 index.md**
+   - 添加新的摘要、实体、概念到索引
 
-7. **Record to log.md**
-   - Format: `## [YYYY-MM-DD] ingest | <source-file>`
+7. **记录到 log.md**
+   - 格式：`## [YYYY-MM-DD] ingest | <源文件>`
 
-## Output
+## 输出
 
-- Show created/updated pages
-- Confirm wiki updated
+- 显示创建/更新的页面
+- 确认维基已更新

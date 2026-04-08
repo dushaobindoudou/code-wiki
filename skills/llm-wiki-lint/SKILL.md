@@ -1,51 +1,51 @@
 ---
 name: llm-wiki:lint
-description: Health check for LLM Wiki
+description: LLM Wiki 健康检查
 ---
 
 # llm-wiki:lint
 
-Health check for the wiki.
+维基健康检查。
 
-## Usage
+## 用法
 
 `/wiki lint`
 
-## Pre-requisites
+## 前置条件
 
-Wiki must be initialized.
+维基已初始化。
 
-## Checks Performed
+## 检查项目
 
-1. **Orphan pages**
-   - Find pages with no inbound links
-   - List orphaned entities/concepts
+1. **孤儿页面**
+   - 找出没有 inbound 链接的页面
+   - 列出孤立的实体/概念
 
-2. **Missing links**
-   - Find mentioned concepts without dedicated pages
-   - Suggest creating new concept pages
+2. **缺失链接**
+   - 找出提到但没有独立页面的概念
+   - 建议创建新概念页
 
-3. **Empty sections**
-   - Find empty entity/concept directories
-   - Flag for review
+3. **空目录**
+   - 找出空的 entities/concepts 目录
+   - 标记待检查
 
-4. **Index consistency**
-   - Verify index.md matches actual content
-   - List discrepancies
+4. **Index 一致性**
+   - 验证 index.md 与实际内容匹配
+   - 列出差异
 
-5. **Log format**
-   - Verify log.md entries are properly formatted
+5. **日志格式**
+   - 验证 log.md 条目格式正确
 
-## Output
+## 输出
 
-Report each check result with:
-- Status: ✅ pass / ⚠️ warning / ❌ error
-- Details
-- Suggested fixes (if any)
+每项检查结果报告：
+- 状态：✅ 通过 / ⚠️ 警告 / ❌ 错误
+- 详情
+- 修复建议（如有）
 
-## Auto-fix Options
+## 自动修复选项
 
-After showing results, offer to:
-- Remove orphan pages
-- Create missing concept pages
-- Rebuild index
+显示结果后，询问是否：
+- 删除孤儿页面
+- 创建缺失的概念页面
+- 重建索引
