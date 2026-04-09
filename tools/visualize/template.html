@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Wiki 知识图谱</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            overflow: hidden;
+        }
+        #graph {
+            width: 100vw;
+            height: 100vh;
+        }
+        .node {
+            cursor: pointer;
+        }
+        .node circle {
+            stroke: #fff;
+            stroke-width: 2px;
+        }
+        .node text {
+            font-size: 12px;
+            fill: #eee;
+            pointer-events: none;
+        }
+        .link {
+            stroke: #555;
+            stroke-opacity: 0.6;
+        }
+        .tooltip {
+            position: absolute;
+            background: #16213e;
+            border: 1px solid #0f3460;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            max-width: 300px;
+            display: none;
+        }
+        .legend {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #16213e;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        #info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: #16213e;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div id="graph"></div>
+    <div class="tooltip" id="tooltip"></div>
+    <div class="legend">
+        <div style="font-weight: bold; margin-bottom: 10px;">类型</div>
+        <div class="legend-item"><div class="legend-color" style="background: #4fc3f7;"></div>实体 (entity)</div>
+        <div class="legend-item"><div class="legend-color" style="background: #81c784;"></div>概念 (concept)</div>
+        <div class="legend-item"><div class="legend-color" style="background: #ffb74d;"></div>摘要 (summary)</div>
+        <div class="legend-item"><div class="legend-color" style="background: #ba68c8;"></div>综合 (synthesis)</div>
+        <div class="legend-item"><div class="legend-color" style="background: #4dd0e1;"></div>对比 (comparison)</div>
+    </div>
+    <div id="info">
+        <div>节点: <span id="node-count">0</span></div>
+        <div>边: <span id="edge-count">0</span></div>
+    </div>
+
+    <script>
+        const TYPE_COLORS = {
+            "entity": "#4fc3f7",
+            "concept": "#81c784",
+            "summary": "#ffb74d",
+            "synthesis": "#ba68c8",
+            "comparison": "#4dd0e1",
+            "unknown": "#999"
+        };
+
+        const data = __DATA__;
+
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        const svg = d3.select("#graph")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        // 缩放
+        const g = svg.append("g");
+        const zoom = d3.zoom()
+            .scaleExtent([0.1, 4])
+            .on("zoom", (event) => {
+                g.attr("transform", event.transform);
+            });
+        svg.call(zoom);
+
+        // 力学模拟
+        const simulation = d3.forceSimulation(data.nodes)
+            .force("link", d3.forceLink(data.edges).id(d => d.id).distance(100))
+            .force("charge", d3.forceManyBody().strength(-300))
+            .force("center", d3.forceCenter(width / 2, height / 2))
+            .force("collision", d3.forceCollide().radius(30));
+
+        // 绘制边
+        const link = g.append("g")
+            .selectAll("line")
+            .data(data.edges)
+            .join("line")
+            .attr("class", "link")
+            .attr("stroke-width", 1.5);
+
+        // 绘制节点
+        const node = g.append("g")
+            .selectAll("g")
+            .data(data.nodes)
+            .join("g")
+            .attr("class", "node")
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+
+        node.append("circle")
+            .attr("r", d => 10 + Math.min(d.inDegree || 0, 5))
+            .attr("fill", d => TYPE_COLORS[d.type] || TYPE_COLORS.unknown);
+
+        node.append("text")
+            .attr("dx", 15)
+            .attr("dy", 4)
+            .text(d => d.title);
+
+        // 悬停提示
+        const tooltip = d3.select("#tooltip");
+        node.on("mouseover", (event, d) => {
+            tooltip.style("display", "block")
+                .style("left", (event.pageX + 10) + "px")
+                .style("top", (event.pageY + 10) + "px")
+                .html(`
+                    <strong>${d.title}</strong><br>
+                    <span style="color: #888;">类型: ${d.type}</span><br>
+                    <span style="color: #666;">${d.path}</span>
+                `);
+        })
+        .on("mouseout", () => {
+            tooltip.style("display", "none");
+        });
+
+        // 点击跳转
+        node.on("click", (event, d) => {
+            console.log("Clicked:", d.path);
+        });
+
+        simulation.on("tick", () => {
+            link
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+
+            node.attr("transform", d => `translate(${d.x},${d.y})`);
+        });
+
+        function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+
+        function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+
+        // 更新计数
+        document.getElementById("node-count").textContent = data.nodes.length;
+        document.getElementById("edge-count").textContent = data.edges.length;
+    </script>
+</body>
+</html>
