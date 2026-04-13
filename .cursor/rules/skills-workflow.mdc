@@ -1,0 +1,12 @@
+---
+description: Skill 开发与维护流程约束
+globs: "{skills/**/SKILL.md,tools/**/SKILL.md,docs/**/*.md}"
+alwaysApply: false
+---
+
+# Skills Workflow Rules
+
+- 编辑 Skill 前必须先阅读该 Skill 的现有 `SKILL.md`。
+- 设计说明与实现计划优先写入 `docs/superpowers/specs/` 与 `docs/superpowers/plans/`。
+- 涉及主 Skill 与子 Skill 时，明确职责拆分与调用顺序。
+- 更新 Skill 能力时，同步检查 `README.md` 与 `README_CN.md` 是否需要对齐。

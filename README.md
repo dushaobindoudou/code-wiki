@@ -192,3 +192,111 @@ This is also a reference to [[concepts/llm]]
 ## License
 
 MIT
+
+---
+
+## Hard Questions FAQ (User Perspective)
+
+> This section answers the toughest questions: "Can I use this now?", "Why is it better?", and "What happens when it fails?"
+
+### 1) Is it usable now? Can I get value in 10 minutes?
+
+**Answer**: The current project is usable for Skill-level workflow demos (`init/ingest/query/lint/visualize`), but not yet a fully packaged production product.  
+**How we address it**:
+- Provide a fixed quick path: `/wiki init --path ./wiki` -> `/wiki ingest <file>` -> `/wiki query <question>` -> `/wiki lint`
+- Add a minimal reproducible demo dataset with expected outputs
+
+### 2) Why not just ask an LLM to make notes directly?
+
+**Answer**: The key differentiation is **compounding structured knowledge**, not one-off answers:
+- Persistent page taxonomy (entities/concepts/summaries/synthesis/comparisons)
+- Explicit relation graph (entity/concept/code-path links)
+- Query results can be saved back, so knowledge improves over time
+
+### 3) How do you prove quality? Any benchmark?
+
+**Answer**: No public benchmark is published yet; this is a known gap.  
+**How we address it**:
+- Build a small evaluation set (10-20 bilingual docs)
+- Track core metrics: entity extraction precision, relation validity, citation coverage in answers, lint issue rate
+- Run regression checks after rule changes
+
+### 4) What about failures? Can it silently corrupt my wiki?
+
+**Answer**: File-system-first storage gives auditability, but fault injection and rollback flow still need hardening.  
+**How we address it**:
+- Add pre-write checks, post-write lint, and structured failure logs
+- Add page-level backup/snapshot strategy for critical writes
+- Document a recovery runbook for conflicts/duplicates/format issues
+
+### 5) What happens to old data when schema changes?
+
+**Answer**: There is a schema entry point, but migration policy is still incomplete.  
+**How we address it**:
+- Add explicit schema versioning
+- Define backward-compatibility windows and conversion rules
+- Add a migration checklist (before/after validation)
+
+### 6) How do teams avoid overwrite conflicts?
+
+**Answer**: `./wiki` can already be version-controlled, but merge/conflict governance needs clearer standards.  
+**How we address it**:
+- Define naming/ownership conventions for pages
+- Add PR checks for links, frontmatter validity, and conflict review
+- Treat `lint` as a merge gate
+
+### 7) What about privacy and security?
+
+**Answer**: Local-first storage is good by default, but explicit redaction policy and processing boundary docs are still needed.  
+**How we address it**:
+- Add sensitive-data handling policy (PII/secrets/credentials)
+- Add optional redaction before ingest
+- Document model-processing boundaries and retention behavior
+
+### 8) Why should I trust auto-generated relations?
+
+**Answer**: No citation, no trust. Relations should be traceable or marked as low-confidence.  
+**How we address it**:
+- Prefer source-grounded citations in query/analysis outputs
+- Mark low-confidence relations as "needs review"
+- Add lint checks for unsupported core claims
+
+### 9) Is Chinese/multilingual support really stable?
+
+**Answer**: Chinese commands and docs are in place, but cross-lingual entity normalization is still an active improvement area.  
+**How we address it**:
+- Add mixed Chinese-English evaluation cases
+- Build alias/term mapping (CN/EN/acronym)
+- Show synonym mapping in query responses
+
+### 10) Will maintenance collapse after a few months?
+
+**Answer**: It will if there are no metrics and no automated gates.  
+**How we address it**:
+- Operationalize lint/link/integrity checks
+- Define versioning cadence for rules/schema changes
+- Keep runbooks and validation scripts as the source of truth
+
+---
+
+## 30-Day Gap-Closing Plan
+
+### Week 1: Usability
+- Ship a "10-minute happy path" demo
+- Provide sample input + expected output
+- Done criteria: a new user can complete the flow once without intervention
+
+### Week 2: Quality Baseline
+- Build a minimal bilingual evaluation set
+- Define metrics and pass/fail thresholds
+- Done criteria: one baseline report is produced and stored
+
+### Week 3: Reliability & Recovery
+- Add write guards, logs, and recovery docs
+- Cover at least 3 common failure scenarios
+- Done criteria: failures can be reproduced and recovered with documented steps
+
+### Week 4: Collaboration & Governance
+- Finalize schema version/migration policy
+- Add team merge governance (`lint` gate + PR checklist)
+- Done criteria: concurrent team changes merge cleanly with validated wiki integrity

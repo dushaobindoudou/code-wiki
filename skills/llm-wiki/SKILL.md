@@ -5,14 +5,16 @@ description: Code Wiki - 个人/团队知识库（支持中文指令：初始化
 
 # Code Wiki Skill
 
-基于 Karpathy 的 Code Wiki 架构构建的个人/团队知识库。
+基于 Karpathy 的 LLM Wiki 架构构建的个人/团队知识库。
 
-## 命令（中文优化）
+## 命令
 
 | 命令 | 子 Skill | 说明 |
 |------|----------|------|
-| `/wiki init` | code-wiki:init | 初始化维基到 ~/.openwiki |
+| `/wiki init` | code-wiki:init | 初始化维基（默认当前项目 ./wiki） |
 | `/wiki 初始化` | code-wiki:init | 初始化维基 |
+| `/wiki init --global` | code-wiki:init | 在全局位置创建 ~/.openwiki |
+| `/wiki init --path <dir>` | code-wiki:init | 指定目录创建 |
 | `/wiki ingest <文件>` | code-wiki:ingest | 摄取文档到维基 |
 | `/wiki 摄取 <文件>` | code-wiki:ingest | 摄取文档 |
 | `/wiki query <问题>` | code-wiki:query | 查询维基 |
@@ -23,7 +25,7 @@ description: Code Wiki - 个人/团队知识库（支持中文指令：初始化
 | `/wiki status` | (内置) | 显示维基状态 |
 | `/wiki help` | (内置) | 显示帮助 |
 
-## 触发模式（中文优化）
+## 触发模式
 
 - "初始化维基" / "初始化wiki" / "建一个维基" → code-wiki:init
 - "摄取" / "摄入" / "把xxx摄入" / "添加文档" → code-wiki:ingest
@@ -32,16 +34,19 @@ description: Code Wiki - 个人/团队知识库（支持中文指令：初始化
 - "可视化" / "图谱" / "知识图谱" → code-wiki:visualize
 - "查看规范" / "wiki规则" → code-wiki:schema
 
-## 维基位置
+## 维基位置（项目优先）
 
-默认：`~/.openwiki`
-自定义：`/wiki init --path <目录>`
+**查找顺序**：
+1. **当前项目 `./wiki`** - 优先在当前目录查找
+2. **项目根目录 `../wiki`** - 上一级目录
+3. **`~/.openwiki`** - 用户主目录（最后 fallback）
 
-**项目内创建（推荐开发项目使用）**：
+**手动指定**：
 ```bash
-/wiki init --path ./wiki
+/wiki init --path ./wiki   # 强制在当前目录创建
+/wiki init --path <dir>    # 指定任意目录
+/wiki init --global       # 强制使用 ~/.openwiki
 ```
-这样可以将维基创建在项目根目录下的 `wiki/` 文件夹，便于提交到代码仓库。
 
 ## 架构
 
