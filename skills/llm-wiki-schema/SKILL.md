@@ -1,9 +1,9 @@
 ---
-name: llm-wiki:schema
-description: 管理 LLM Wiki 行为规范（CLAUDE.md）
+name: code-wiki:schema
+description: 管理 Code Wiki 行为规范（CLAUDE.md）
 ---
 
-# llm-wiki:schema
+# code-wiki:schema
 
 管理维基的行为规范。
 

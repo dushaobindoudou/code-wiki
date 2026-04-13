@@ -1,9 +1,9 @@
 ---
-name: llm-wiki:ingest
-description: 将源文档摄取到 LLM Wiki，每次触达 10-15 个页面
+name: code-wiki:ingest
+description: 将源文档摄取到 Code Wiki，每次触达 10-15 个页面
 ---
 
-# llm-wiki:ingest
+# code-wiki:ingest
 
 将源文档摄取到维基。每次摄取应触达 10-15 个 wiki 页面，确保知识的充分关联。
 

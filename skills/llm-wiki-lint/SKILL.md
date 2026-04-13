@@ -1,9 +1,9 @@
 ---
-name: llm-wiki:lint
-description: LLM Wiki 健康检查，包括知识图谱一致性验证
+name: code-wiki:lint
+description: Code Wiki 健康检查，包括知识图谱一致性验证
 ---
 
-# llm-wiki:lint
+# code-wiki:lint
 
 维基健康检查。
 

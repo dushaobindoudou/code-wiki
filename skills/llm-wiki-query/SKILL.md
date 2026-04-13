@@ -1,9 +1,9 @@
 ---
-name: llm-wiki:query
-description: 查询 LLM Wiki 知识库并对话，强化存回维基功能
+name: code-wiki:query
+description: 查询 Code Wiki 知识库并对话，强化存回维基功能
 ---
 
-# llm-wiki:query
+# code-wiki:query
 
 查询维基并生成答案。
 

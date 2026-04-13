@@ -1,9 +1,9 @@
 ---
-name: llm-wiki:init
-description: 初始化 LLM Wiki 目录结构到 ~/.openwiki
+name: code-wiki:init
+description: 初始化 Code Wiki 目录结构到 ~/.openwiki
 ---
 
-# llm-wiki:init
+# code-wiki:init
 
 初始化维基目录结构。
 
@@ -45,7 +45,7 @@ description: 初始化 LLM Wiki 目录结构到 ~/.openwiki
 ## Schema/CLAUDE.md 模板
 
 ```markdown
-# LLM Wiki Agent 说明
+# Code Wiki Agent 说明
 
 ## 角色
 你是维基管理员，负责维护结构化、累积的知识库。
