@@ -3,6 +3,8 @@
 **日期**: 2026-04-08
 **基于**: Karpathy 的 LLM Wiki 架构 (https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)
 
+**更新**: 2026-04-13 - 添加中文优化、Ingest 增强、知识图谱代码关联
+
 ---
 
 ## 1. 概述
@@ -109,17 +111,24 @@ wiki/
 - 支持：Markdown、PDF、TXT、URL（需先下载）
 - 对话模式：摄取后与用户确认关键要点
 
-**处理流程**:
+**处理流程（10-15 页触达）**:
 1. 读取源文档
 2. 提取关键信息（实体、概念、要点）
 3. 生成摘要页 (`summaries/`)
-4. 更新相关实体页/概念页
-5. 更新 `index.md`
-6. 记录到 `log.md`
+4. 提取并更新实体（每个实体 1 页）
+5. 提取并更新概念（每个概念 1 页）
+6. **更新实体关系** (`entities/relations.md`)
+7. **更新概念关系** (`concepts/relations.md`)
+8. **检查并创建综合分析页** (`synthesis/`)
+9. **检查并创建对比页** (`comparisons/`)
+10. **添加代码路径关联**（如涉及代码）
+11. 更新 `index.md`
+12. 记录到 `log.md`（包含触达页面数）
 
 **约束**:
 - 源文档放在 `raw/sources/`，永不修改
-- 每次 ingest 至少更新 3+ 个维基页面
+- **每次 ingest 触达 10-15 个维基页面**（核心增强）
+- 代码路径关联使用 `code_paths` YAML 字段
 
 ### 3.3 llm-wiki:query
 
@@ -129,20 +138,23 @@ wiki/
 - 用户调用 `/wiki query <question>` 或直接提问
 - LLM 先查 `index.md` 定位相关页面
 - 读取相关页面，综合答案
-- 答案可选择存回维基（生成新页面）
+- **答案必须建议存回维基**（生成新页面）
 
 **输出格式**:
 - Markdown（默认）
 - 对比表（使用 `||` 语法）
 - 可选：Marp 幻灯片、matplotlib 图表
+- **自动创建对比页**（"xxx和yyy区别"类问题）
 
-**特殊规则**:
+**特殊规则（中文优化 + 强化存回）**:
 - 好的答案必须包含引用 `[[page-name]]`
-- 鼓励将探索结果存回维基
+- **必须**建议将探索结果存回维基
+- 中文触发词："关于xxx你知道什么"、"给我分析一下xxx"、"xxx和yyy有什么区别"等
+- 存回类型：synthesis（分析类）、comparisons（对比类）、entities/concepts（新实体/概念）
 
 ### 3.4 llm-wiki:lint
 
-**功能**: 健康检查
+**功能**: 健康检查（包括知识图谱一致性）
 
 **交互**:
 - 用户调用 `/wiki lint` 或 "检查维基健康"
@@ -153,24 +165,111 @@ wiki/
 3. 空目录（无内容的 entities/concepts 目录）
 4. Index 一致性（index.md 与实际内容匹配）
 5. 日志格式（log.md 条目格式正确）
+6. **代码路径有效性**（code_paths 字段指向的路径是否存在）
+7. **知识图谱完整性**（relations.md 存在性、实体/概念关系定义覆盖度）
 
 > **MVP 说明**: "矛盾内容检测"和"过时信息检测"需要语义分析，超出 MVP 范围
 
 **输出**:
 - 问题列表及修复建议
 - 可一键修复（LLM 自动处理）
+- 代码路径失效警告
+- 知识图谱连通性建议
 
-### 3.5 llm-wiki:schema（可选）
+### 3.6 llm-wiki:visualize（新增）
 
-**功能**: 管理/编辑维基的行为规范
+**功能**: 可视化知识图谱
 
 **交互**:
-- 用户调用 `/wiki schema edit` 修改 CLAUDE.md
-- 用户调用 `/wiki schema show` 查看当前规范
+- 用户调用 `/wiki visualize` 或 "查看知识图谱"
+- 生成交互式 HTML 图谱
+- 可选：不打开浏览器（`--no-open`）
+
+**功能**:
+- 力导向图布局
+- 按类型着色（实体=蓝、概念=绿、摘要=橙、紫=综合、青=对比）
+- 节点大小反映入度
+- 支持拖拽、缩放
+- **代码路径显示**：如实体/概念有 code_paths，显示关联代码位置
 
 ---
 
-## 4. Schema 设计 (CLAUDE.md)
+## 4. 知识图谱代码关联（新增）
+
+将维基实体/概念与项目代码文件关联：
+
+### YAML 字段
+
+```yaml
+code_paths:
+  - path: src/utils/helper.ts
+    type: module
+    description: 工具函数模块
+  - path: server/api/auth.js
+    type: api
+    description: 认证接口
+```
+
+### 使用场景
+
+- **Ingest**: 从源文档提取代码路径，添加到实体/概念页
+- **Query**: 回答涉及代码的问题时，可引用 code_paths
+- **Lint**: 验证 code_paths 指向的文件是否存在
+- **Visualize**: 在图谱中显示代码位置
+
+### 优势
+
+- 知识图谱与项目代码联动
+- 快速定位相关代码文件
+- 支持代码追踪和文档维护
+
+---
+
+## 5. 最佳实践（来自 nashsu/llm_wiki）
+
+### 图片处理
+- 使用 Obsidian Web Clipper 获取文章时，设置附件文件夹为 `raw/assets/`
+- 使用 Ctrl+Shift+D 下载所有图片到本地
+- LLM 读取文本后，单独查看相关图片
+
+### Git 版本控制
+- wiki 目录本身就是 git 仓库
+- 每次重要操作后提交：`git add . && git commit -m "feat: 添加新源文档"`
+- 使用分支进行实验性整理
+
+### 与 Obsidian 集成
+- 建议一边与 LLM 对话一边在 Obsidian 中实时查看
+- 使用 Obsidian Graph View 查看知识图谱结构
+- 使用 Dataview 查询（需在页面添加 YAML frontmatter）
+- 使用 Marp 插件生成幻灯片
+
+### 工作流建议
+- 源文件逐个摄取，保持人工参与
+- 每次摄取后检查摘要是否符合预期
+- 定期运行 `/wiki lint` 检查维基健康
+- 有价值的问答结果及时存回维基
+
+### Ingest 增强
+每次摄取应触达 **10-15 个维基页面**，确保知识的充分关联：
+1. 创建摘要页 → 1 页
+2. 提取实体，每个实体创建/更新 1 页
+3. 提取概念，每个概念创建/更新 1 页
+4. 更新实体关系页 → 1 页
+5. 更新概念关系页 → 1 页
+6. 检查是否需要创建综合分析页（synthesis）
+7. 检查是否需要创建对比页（comparisons）
+8. 如涉及代码，添加 code_paths 字段
+9. 更新 index.md → 1 页
+10. 记录 log.md → 1 页
+
+### Query 强化存回
+- **必须**建议将探索结果存回维基
+- 自动为"xxx和yyy区别"类问题创建对比页
+- 存回类型根据问题类型自动建议
+
+---
+
+## 6. Schema 设计 (CLAUDE.md)
 
 维基的 CLAUDE.md 是让 LLM 正确扮演"维基管理员"角色的核心。包含：
 
@@ -209,28 +308,34 @@ wiki/
 
 ---
 
-## 5. 命令路由设计
+## 7. 命令路由设计
 
 主 skill `llm-wiki` 负责命令路由：
 
 ```
 /wiki init [--path <dir>]     → llm-wiki:init
+/wiki 初始化                   → llm-wiki:init
 /wiki ingest <file>           → llm-wiki:ingest
+/wiki 摄取 <file>             → llm-wiki:ingest
 /wiki query <question>        → llm-wiki:query
+/wiki 查询 <question>         → llm-wiki:query
 /wiki lint                    → llm-wiki:lint
+/wiki 检查                    → llm-wiki:lint
+/wiki visualize               → llm-wiki:visualize
 /wiki status                  → 显示维基状态
 /wiki help                    → 显示帮助
 ```
 
-对话触发：
-- "初始化维基" → init
-- "摄取这篇文档" → ingest
-- "帮我分析xxx" → query
-- "检查维基健康" → lint
+对话触发（中文优化）：
+- "初始化维基" / "初始化wiki" / "建一个维基" → init
+- "摄取" / "摄入" / "添加文档" → ingest
+- "查询" / "关于xxx你知道什么" / "分析xxx" / "xxx和yyy区别" → query
+- "检查" / "健康" / "维护" → lint
+- "可视化" / "图谱" → visualize
 
 ---
 
-## 6. 依赖和约束
+## 8. 依赖和约束
 
 - **无外部依赖**：纯文件系统 + LLM 能力
 - **平台**：Claude Code, Codex, OpenCode（通用）
@@ -241,7 +346,7 @@ wiki/
 
 ---
 
-## 7. 后续扩展
+## 9. 后续扩展
 
 MVP 后可考虑：
 - 多语言支持
@@ -251,7 +356,7 @@ MVP 后可考虑：
 
 ---
 
-## 8. 验收标准
+## 10. 验收标准
 
 1. 用户运行 `/wiki init` 能创建完整目录结构
 2. 用户摄取一篇文档后，维基包含：摘要页 + 更新的实体/概念页 + index 更新 + log 记录
