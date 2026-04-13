@@ -300,3 +300,31 @@ MIT
 - Finalize schema version/migration policy
 - Add team merge governance (`lint` gate + PR checklist)
 - Done criteria: concurrent team changes merge cleanly with validated wiki integrity
+
+---
+
+## Release Mode And Testing
+
+### Is this production-ready now?
+
+This repository is now managed as **Docs/Skill GA** release mode.  
+Definition: `docs/release/PRODUCTION-READINESS.md`
+
+### How to run tests?
+
+```bash
+bash tools/qa/release-gate.sh
+```
+
+The script validates:
+- Core file completeness
+- README command coverage
+- Main skill routing integrity
+
+### Can this auto-update?
+
+Yes. GitHub Actions workflow is included: `.github/workflows/release-gate.yml`
+
+- `push/pull_request`: runs release gate checks automatically
+- `schedule` (every Monday 01:00 UTC): runs checks and updates `docs/release/AUTO-UPDATE-HEARTBEAT.md`
+- `workflow_dispatch`: manual trigger support

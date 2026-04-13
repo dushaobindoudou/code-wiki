@@ -1,0 +1,54 @@
+name: release-gate
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  schedule:
+    - cron: "0 1 * * 1"
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run release gate
+        run: bash tools/qa/release-gate.sh
+
+  auto-heartbeat:
+    if: github.event_name == 'schedule'
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update heartbeat
+        run: |
+          mkdir -p docs/release
+          {
+            echo "# Auto Update Heartbeat"
+            echo
+            echo "- last_check_utc: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+            echo "- workflow: release-gate"
+            echo "- result: passed"
+          } > docs/release/AUTO-UPDATE-HEARTBEAT.md
+
+      - name: Commit heartbeat
+        run: |
+          if git diff --quiet; then
+            echo "No update needed."
+            exit 0
+          fi
+          git add docs/release/AUTO-UPDATE-HEARTBEAT.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: update release heartbeat"
+          git push

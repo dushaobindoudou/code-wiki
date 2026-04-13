@@ -313,3 +313,31 @@ MIT
 - 完成 schema 版本与迁移规范
 - 增加团队协作流程（PR 检查项 + lint 门禁）
 - 完成标准：多人并行提交后可稳定合并
+
+---
+
+## 正式态与测试
+
+### 当前是否正式态？
+
+当前仓库已按 **文档与 Skill 正式态（Docs/Skill GA）** 管理。  
+说明见：`docs/release/PRODUCTION-READINESS.md`
+
+### 如何执行测试？
+
+```bash
+bash tools/qa/release-gate.sh
+```
+
+该脚本会校验：
+- 核心文件是否完整
+- README 命令是否覆盖核心能力
+- 主 Skill 是否正确路由子 Skill
+
+### 自动更新怎么做？
+
+已内置 GitHub Actions 工作流：`.github/workflows/release-gate.yml`
+
+- `push/pull_request`：自动执行发布门禁测试
+- `schedule`（每周一 UTC 01:00）：自动巡检并更新 `docs/release/AUTO-UPDATE-HEARTBEAT.md`
+- `workflow_dispatch`：支持手动触发
