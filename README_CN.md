@@ -257,7 +257,7 @@ git commit -m "feat: 初始化项目维基"
 ## 相关项目
 
 - [Karpathy's LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) - 原始理念
-- [nashsu/llm_wiki](https://github.com/nashsu/llm_wiki) - 参考实现
+ - 参考实现
 - [gbrain](https://github.com/garrytan/gbrain) - 另一个知识库系统
 
 ---
