@@ -51,7 +51,7 @@ def scan_wiki(wiki_path: str) -> Tuple[List[Dict], List[Dict]]:
 
     wiki_path = os.path.abspath(wiki_path)
 
-    # 遍历所有 .md 文件
+    # 第一遍：收集所有节点
     for root, dirs, files in os.walk(wiki_path):
         # 跳过非维基目录
         if "raw/sources" in root or "raw/assets" in root:
@@ -89,15 +89,37 @@ def scan_wiki(wiki_path: str) -> Tuple[List[Dict], List[Dict]]:
             }
             nodes.append(node)
 
+    # 第二遍：提取链接，创建边（只保留有效引用）
+    for root, dirs, files in os.walk(wiki_path):
+        if "raw/sources" in root or "raw/assets" in root:
+            continue
+
+        for filename in files:
+            if not filename.endswith(".md"):
+                continue
+            if filename in ["index.md", "log.md"]:
+                continue
+
+            file_path = os.path.join(root, filename)
+            rel_path = os.path.relpath(file_path, wiki_path)
+
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    content = f.read()
+            except Exception:
+                continue
+
             # 提取链接，创建边
             links = extract_links(content)
             for link in links:
                 # 转换链接为节点 ID
                 target_id = link_to_node_id(link)
-                edges.append({
-                    "source": node_id,
-                    "target": target_id
-                })
+                # 只添加有效的边（目标节点存在）
+                if target_id in node_ids:
+                    edges.append({
+                        "source": rel_path,
+                        "target": target_id
+                    })
 
     return nodes, edges
 
