@@ -1,0 +1,68 @@
+{
+  "skill_name": "wiki",
+  "evals": [
+    {
+      "id": 1,
+      "eval_name": "init-wiki-in-project",
+      "prompt": "初始化一个维基到 /tmp/code-wiki-test，使用项目优先模式（默认 ./wiki）",
+      "expected_output": "创建 wiki 目录结构，包含 raw/, wiki/, schema/, index.md, log.md",
+      "assertions": [
+        {
+          "type": "file_exists",
+          "path": "/tmp/code-wiki-test/wiki/entities"
+        },
+        {
+          "type": "file_exists",
+          "path": "/tmp/code-wiki-test/wiki/concepts"
+        },
+        {
+          "type": "file_exists",
+          "path": "/tmp/code-wiki-test/index.md"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "eval_name": "ingest-split-by-topic",
+      "prompt": "将测试文档 /tmp/test-ai.md 摄取到 /tmp/code-wiki-test 维基。文档包含两个主题：大模型和机器人。",
+      "expected_output": "生成 10-15 个页面，包括：2个 summary（按主题拆分）、实体页、概念页、关系页等",
+      "assertions": [
+        {
+          "type": "file_count_in_dir",
+          "dir": "/tmp/code-wiki-test/wiki/summaries",
+          "min": 2,
+          "max": 3
+        },
+        {
+          "type": "file_contains",
+          "path": "/tmp/code-wiki-test/log.md",
+          "pattern": "ingest"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "eval_name": "query-with-citation",
+      "prompt": "在维基 /tmp/code-wiki-test 中查询：什么是大模型？",
+      "expected_output": "返回答案，包含 [[entities/]] 或 [[concepts/]] 引用",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "pattern": "[["
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "eval_name": "lint-check-health",
+      "prompt": "对维基 /tmp/code-wiki-test 运行健康检查",
+      "expected_output": "检查结果，包含 orphan pages、missing links 等信息",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "pattern": "orphan|links|index"
+        }
+      ]
+    }
+  ]
+}
