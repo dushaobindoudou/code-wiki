@@ -7,18 +7,9 @@
       "prompt": "初始化一个维基到 /tmp/code-wiki-test，使用项目优先模式（默认 ./wiki）",
       "expected_output": "创建 wiki 目录结构，包含 raw/, wiki/, schema/, index.md, log.md",
       "assertions": [
-        {
-          "type": "file_exists",
-          "path": "/tmp/code-wiki-test/wiki/entities"
-        },
-        {
-          "type": "file_exists",
-          "path": "/tmp/code-wiki-test/wiki/concepts"
-        },
-        {
-          "type": "file_exists",
-          "path": "/tmp/code-wiki-test/index.md"
-        }
+        {"type": "file_exists", "path": "/tmp/code-wiki-test/wiki/entities"},
+        {"type": "file_exists", "path": "/tmp/code-wiki-test/wiki/concepts"},
+        {"type": "file_exists", "path": "/tmp/code-wiki-test/index.md"}
       ]
     },
     {
@@ -27,17 +18,8 @@
       "prompt": "将测试文档 /tmp/test-ai.md 摄取到 /tmp/code-wiki-test 维基。文档包含两个主题：大模型和机器人。",
       "expected_output": "生成 10-15 个页面，包括：2个 summary（按主题拆分）、实体页、概念页、关系页等",
       "assertions": [
-        {
-          "type": "file_count_in_dir",
-          "dir": "/tmp/code-wiki-test/wiki/summaries",
-          "min": 2,
-          "max": 3
-        },
-        {
-          "type": "file_contains",
-          "path": "/tmp/code-wiki-test/log.md",
-          "pattern": "ingest"
-        }
+        {"type": "file_count_in_dir", "dir": "/tmp/code-wiki-test/wiki/summaries", "min": 2, "max": 3},
+        {"type": "file_contains", "path": "/tmp/code-wiki-test/log.md", "pattern": "ingest"}
       ]
     },
     {
@@ -46,10 +28,7 @@
       "prompt": "在维基 /tmp/code-wiki-test 中查询：什么是大模型？",
       "expected_output": "返回答案，包含 [[entities/]] 或 [[concepts/]] 引用",
       "assertions": [
-        {
-          "type": "output_contains",
-          "pattern": "[["
-        }
+        {"type": "output_contains", "pattern": "[["}
       ]
     },
     {
@@ -58,10 +37,61 @@
       "prompt": "对维基 /tmp/code-wiki-test 运行健康检查",
       "expected_output": "检查结果，包含 orphan pages、missing links 等信息",
       "assertions": [
-        {
-          "type": "output_contains",
-          "pattern": "orphan|links|index"
-        }
+        {"type": "output_contains", "pattern": "orphan|links|index"}
+      ]
+    },
+    {
+      "id": 5,
+      "eval_name": "visualize-generates-html",
+      "prompt": "可视化维基 /tmp/code-wiki-test 的知识图谱",
+      "expected_output": "生成交互式 HTML 文件",
+      "assertions": [
+        {"type": "output_contains", "pattern": "html|visualize"}
+      ]
+    },
+    {
+      "id": 6,
+      "eval_name": "insight-create-synthesis",
+      "prompt": "手动创建一个关于 AI 发展趋势的洞察页",
+      "expected_output": "在 wiki/synthesis/ 目录创建洞察文件",
+      "assertions": [
+        {"type": "output_contains", "pattern": "synthesis|insight"}
+      ]
+    },
+    {
+      "id": 7,
+      "eval_name": "schema-view-rules",
+      "prompt": "查看维基的行为规范",
+      "expected_output": "显示 schema/CLAUDE.md 内容",
+      "assertions": [
+        {"type": "output_contains", "pattern": "schema|CLAUDE.md"}
+      ]
+    },
+    {
+      "id": 8,
+      "eval_name": "init-global-location",
+      "prompt": "在全局位置 ~/.openwiki 初始化维基",
+      "expected_output": "在用户主目录创建 wiki",
+      "assertions": [
+        {"type": "output_contains", "pattern": "~/.openwiki"}
+      ]
+    },
+    {
+      "id": 9,
+      "eval_name": "ingest-10-15-pages-target",
+      "prompt": "摄取文档后验证触达页面数是否达到 10-15 页",
+      "expected_output": "总计页数在 10-15 之间",
+      "assertions": [
+        {"type": "output_contains", "pattern": "10-15|触达"}
+      ]
+    },
+    {
+      "id": 10,
+      "eval_name": "chinese-command-support",
+      "prompt": "使用中文命令 /wiki 摄取 test.md",
+      "expected_output": "中文命令正常工作",
+      "assertions": [
+        {"type": "output_contains", "pattern": "摄取|初始化|查询"}
       ]
     }
   ]
