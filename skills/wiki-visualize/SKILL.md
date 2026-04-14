@@ -53,5 +53,5 @@ description: 可视化 Code Wiki 知识图谱
 
 或直接运行 CLI：
 ```bash
-python tools/visualize/cli.py --path ~/.openwiki
+cd skills/wiki-visualize && python cli.py --path ~/.openwiki
 ```

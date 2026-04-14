@@ -1,6 +1,6 @@
 ---
-name: code-wiki
-description: Code Wiki - 个人/团队知识库（支持中文：初始化、摄取、查询、检查、洞察）。子命令：init, ingest, query, lint, insight, visualize, schema。
+name: wiki
+description: Code Wiki - 个人/团队知识库（支持中文：初始化、摄取、查询、检查、洞察）。子命令：init, ingest, query, lint, insight, visualize, schema。使用此 skill 管理你的知识库。
 ---
 
 # Code Wiki Skill
