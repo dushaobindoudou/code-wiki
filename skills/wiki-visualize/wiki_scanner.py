@@ -17,6 +17,7 @@ DIR_TYPE_MAP = {
     "summaries": "summary",
     "synthesis": "synthesis",
     "comparisons": "comparison",
+    "wiki": "unknown",  # 不单独处理 wiki 目录
     "wiki/entities": "entity",
     "wiki/concepts": "concept",
     "wiki/summaries": "summary",
@@ -29,9 +30,17 @@ def get_node_type(file_path: str, wiki_path: str) -> str:
     rel_path = os.path.relpath(file_path, wiki_path)
     parts = rel_path.split(os.sep)
 
+    # 处理嵌套路径：wiki/entities/xxx.md
     if len(parts) >= 2:
         first_dir = parts[0]
-        return DIR_TYPE_MAP.get(first_dir, "unknown")
+        second_dir = parts[0] + "/" + parts[1] if len(parts) >= 2 else ""
+
+        # 先检查完整路径
+        if second_dir in DIR_TYPE_MAP:
+            return DIR_TYPE_MAP[second_dir]
+        # 再检查单层路径
+        if first_dir in DIR_TYPE_MAP:
+            return DIR_TYPE_MAP.get(first_dir, "unknown")
     return "unknown"
 
 def extract_links(content: str) -> List[str]:
