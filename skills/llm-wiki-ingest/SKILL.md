@@ -33,11 +33,34 @@ description: 将源文档摄取到 Code Wiki，每次触达 10-15 个页面
 - 提取：标题、内容、格式
 - 如果存在 AGENT.md，遵循其中的处理规则
 
-### 3. 生成摘要页
+### 3. 生成摘要页（按主题拆分）
 
-- 创建：`wiki/summaries/<slug>-<日期>.md`
-- 包含：源文件、摄取日期、要点（3-5 条）
-- 添加 YAML frontmatter
+**核心原则**：每个主题独立一个 summary，不要合并。
+
+**识别主题**：
+- 分析文档结构（H1/H2 标题）
+- 检测多个独立话题（如：AI + 区块链是两个主题）
+- 检测对比内容（独立对比主题）
+
+**创建规则**：
+- 每个主题创建独立的 summary
+- 命名：`wiki/summaries/<slug>-<主题>-<日期>.md`
+- 示例：
+  - 原文：AI发展.md（包含"大模型"和"机器人"两个主题）
+  - 生成：
+    - `summaries/ai-fazhan-large-models-2024-01-15.md`
+    - `summaries/ai-fazhan-robots-2024-01-15.md`
+
+**每个 summary 包含**：
+- 源文件、摄取日期
+- 主题标签
+- 要点（3-5 条）
+- YAML frontmatter
+
+**对比主题特殊处理**：
+- 如果文档包含明确的对比（A vs B），创建对比类 summary
+- 标记：`type: comparison-summary`
+- 后续会自动生成 `comparisons/` 页面
 
 ### 4. 提取并更新实体
 

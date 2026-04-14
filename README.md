@@ -95,6 +95,7 @@ Generates interactive HTML graph with drag & zoom support.
 | `/wiki query <question>` | Query wiki |
 | `/wiki lint` | Health check |
 | `/wiki visualize` | Visualize knowledge graph |
+| `/wiki insight <topic>` | Create insight/synthesis manually |
 | `/wiki status` | Show wiki status |
 | `/wiki help` | Show help |
 
@@ -106,6 +107,7 @@ Generates interactive HTML graph with drag & zoom support.
 - "difference between xxx and yyy" → query
 - "check wiki health" → lint
 - "show knowledge graph" → visualize
+- "create insight" / "save this to wiki" → insight
 
 ---
 
@@ -172,6 +174,187 @@ related: [[entity-name]]
 This is a reference to [[entities/john-doe]]
 This is also a reference to [[concepts/llm]]
 ```
+
+---
+
+## Skill Reference
+
+### 1. `/wiki init` - Initialize Wiki
+
+**What it does**: Creates the wiki directory structure.
+
+**How to use**:
+```bash
+/wiki init                    # Default: ./wiki (project-first)
+/wiki init --path ./wiki     # Force in current project
+/wiki init --global           # Force in ~/.openwiki
+/wiki init --path ~/my-wiki  # Custom directory
+```
+
+**Best Practices**:
+- For **development projects**: Use `./wiki` to version control with your code
+- For **personal knowledge**: Use `--global` or default `~/.openwiki`
+- Project location takes priority: `./wiki` > `../wiki` > `~/.openwiki`
+
+**Directory Structure Created**:
+```
+wiki/
+├── raw/
+│   ├── sources/           # Original documents
+│   └── assets/            # Images, resources
+├── wiki/
+│   ├── entities/          # People, organizations, projects
+│   ├── concepts/          # Topics, theories, ideas
+│   ├── summaries/         # Document summaries
+│   ├── synthesis/         # Comprehensive analysis
+│   └── comparisons/       # Comparison analysis
+├── schema/
+│   └── CLAUDE.md          # Behavior rules
+├── index.md               # Content index
+└── log.md                 # Operation log
+```
+
+---
+
+### 2. `/wiki ingest` - Ingest Documents
+
+**What it does**: Processes source documents and creates 10-15 wiki pages per ingest.
+
+**How to use**:
+```bash
+/wiki ingest ~/documents/article.md
+/wiki 摄取 ~/notes.md
+```
+
+**What happens (10-15 pages per ingest)**:
+1. Creates summary page (1 page, split by topic if multiple topics)
+2. Extracts/updates entities (each entity = 1 page)
+3. Extracts/updates concepts (each concept = 1 page)
+4. Updates entity relations (1 page)
+5. Updates concept relations (1 page)
+6. Creates synthesis if 5+ entities or 3+ concepts (0-2 pages)
+7. Creates comparison if document contains comparisons (0-2 pages)
+8. Associates code paths if applicable (0-1 page)
+9. Updates index.md (1 page)
+10. Records to log.md (1 page)
+
+**Best Practices**:
+- **One document at a time**: Don't batch multiple docs
+- **Review summaries**: After ingest, check if summaries match expectations
+- **Split by topic**: If document has multiple independent topics, each gets its own summary
+- **Chinese support**: Use `/wiki 摄取 <file>` for Chinese workflow
+
+**Trigger Phrases**:
+- "摄取" / "摄入" / "把xxx摄入" / "添加文档"
+
+---
+
+### 3. `/wiki query` - Query Knowledge Base
+
+**What it does**: Answers questions using wiki knowledge with citations.
+
+**How to use**:
+```bash
+/wiki query What are the latest developments in AI?
+/wiki query difference between LLM and GPT
+/wiki 查询 LLM和GPT的区别
+```
+
+**After query**:
+- System **will ask** if you want to save the answer to wiki as an insight
+- If yes → creates synthesis page with the answer and citations
+
+**Best Practices**:
+- **Save valuable answers**: Insights compound over time
+- **Use natural language**: "关于xxx你知道什么" / "xxx 和 yyy 有什么区别"
+- **Check citations**: Verify references are correct
+
+**Trigger Phrases**:
+- "查询" / "问我xxx" / "关于xxx你知道什么" / "分析xxx"
+
+---
+
+### 4. `/wiki lint` - Health Check
+
+**What it does**: Validates wiki integrity and finds issues.
+
+**How to use**:
+```bash
+/wiki lint
+/wiki 检查
+```
+
+**Checks Performed**:
+- Orphan pages (pages not linked from anywhere)
+- Missing links (broken cross-references)
+- Index consistency
+- Code path validity
+- Knowledge graph completeness (entity/concept relations)
+
+**Best Practices**:
+- Run after each ingest
+- Run before any major operation
+- Fix issues before creating PRs (use as merge gate)
+
+**Trigger Phrases**:
+- "检查" / "健康" / "维护" / "整理维基"
+
+---
+
+### 5. `/wiki visualize` - Visualize Knowledge Graph
+
+**What it does**: Generates interactive HTML visualization of the knowledge graph.
+
+**How to use**:
+```bash
+/wiki visualize
+```
+
+**Features**:
+- Drag and zoom
+- Entity nodes
+- Concept nodes
+- Code path associations
+- Relationship lines
+
+**Best Practices**:
+- Use after building substantial content
+- Review to find disconnected areas
+
+---
+
+### 6. `/wiki insight` - Create Insight Manually
+
+**What it does**: Manually create synthesis/insight pages.
+
+**How to use**:
+```bash
+/wiki insight <topic>
+/wiki synthesis <topic>
+/wiki 洞察 <topic>
+/wiki 综合 <topic>
+```
+
+**When to use**:
+- After valuable query responses
+- To consolidate multiple sources
+- For original analysis
+
+**Best Practices**:
+- **After query**: Save valuable answers as insights
+- **Name clearly**: Use descriptive topic names
+- **Include citations**: Reference related entities/concepts
+
+**Insight Types**:
+| Type | Naming | Use Case |
+|------|--------|----------|
+| Analysis | synthesis/analysis-* | Deep analysis |
+| Summary | synthesis/summary-* | Topic summary |
+| Trends | synthesis/trends-* | Trend analysis |
+| Guide | synthesis/guide-* | How-to guides |
+
+**Trigger Phrases**:
+- "创建洞察" / "添加洞察" / "记录洞察" / "综合分析"
 
 ---
 
