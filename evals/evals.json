@@ -93,6 +93,141 @@
       "assertions": [
         {"type": "output_contains", "pattern": "摄取|初始化|查询"}
       ]
+    },
+    {
+      "id": 11,
+      "eval_name": "edge-empty-wiki-query",
+      "prompt": "在空的维基中查询不存在的内容",
+      "expected_output": "提示维基为空，建议先摄取文档",
+      "assertions": [
+        {"type": "output_contains", "pattern": "空|摄取|init"}
+      ]
+    },
+    {
+      "id": 12,
+      "eval_name": "edge-duplicate-ingest",
+      "prompt": "重复摄取同一个文档到维基",
+      "expected_output": "增量更新而非覆盖，保留现有内容",
+      "assertions": [
+        {"type": "output_contains", "pattern": "更新|追加"}
+      ]
+    },
+    {
+      "id": 13,
+      "eval_name": "edge-short-document",
+      "prompt": "摄取只有一个段落的短文档",
+      "expected_output": "正常处理，生成单个 summary",
+      "assertions": [
+        {"type": "output_contains", "pattern": "summary|summary"}
+      ]
+    },
+    {
+      "id": 14,
+      "eval_name": "edge-no-structure-document",
+      "prompt": "摄取没有任何标题结构的纯文本",
+      "expected_output": "仍能提取内容，创建基础 summary",
+      "assertions": [
+        {"type": "output_contains", "pattern": "summary|内容"}
+      ]
+    },
+    {
+      "id": 15,
+      "eval_name": "edge-chinese-only-content",
+      "prompt": "摄取纯中文文档",
+      "expected_output": "正确处理中文内容",
+      "assertions": [
+        {"type": "output_contains", "pattern": "中文|概念"}
+      ]
+    },
+    {
+      "id": 16,
+      "eval_name": "edge-english-only-content",
+      "prompt": "摄取纯英文文档",
+      "expected_output": "正确处理英文内容",
+      "assertions": [
+        {"type": "output_contains", "pattern": "concept|entity"}
+      ]
+    },
+    {
+      "id": 17,
+      "eval_name": "edge-mixed-content",
+      "prompt": "摄取中英文混合文档",
+      "expected_output": "正确处理混合内容",
+      "assertions": [
+        {"type": "output_contains", "pattern": "LLM|概念"}
+      ]
+    },
+    {
+      "id": 18,
+      "eval_name": "edge-comparison-document",
+      "prompt": "摄取包含 A vs B 对比内容的文档",
+      "expected_output": "自动创建 comparisons/ 对比页",
+      "assertions": [
+        {"type": "output_contains", "pattern": "comparison|对比|vs"}
+      ]
+    },
+    {
+      "id": 19,
+      "eval_name": "edge-missing-source-file",
+      "prompt": "尝试摄取不存在的文件",
+      "expected_output": "给出清晰的错误提示",
+      "assertions": [
+        {"type": "output_contains", "pattern": "不存在|找不到|error"}
+      ]
+    },
+    {
+      "id": 20,
+      "eval_name": "edge-wiki-not-initialized",
+      "prompt": "在未初始化维基的情况下执行 ingest",
+      "expected_output": "提示先运行 /wiki init",
+      "assertions": [
+        {"type": "output_contains", "pattern": "init|初始化"}
+      ]
+    },
+    {
+      "id": 21,
+      "eval_name": "edge-entity-relation-detection",
+      "prompt": "摄取包含多个相关人物的文档",
+      "expected_output": "正确识别并建立人物间关系",
+      "assertions": [
+        {"type": "output_contains", "pattern": "relations|关系"}
+      ]
+    },
+    {
+      "id": 22,
+      "eval_name": "edge-code-path-extraction",
+      "prompt": "摄取包含代码文件路径的文档",
+      "expected_output": "提取并关联 code_paths",
+      "assertions": [
+        {"type": "output_contains", "pattern": "code_paths|src/"}
+      ]
+    },
+    {
+      "id": 23,
+      "eval_name": "edge-query-save-back",
+      "prompt": "查询后选择将答案存回维基",
+      "expected_output": "创建新的 synthesis 页面",
+      "assertions": [
+        {"type": "output_contains", "pattern": "synthesis|存回"}
+      ]
+    },
+    {
+      "id": 24,
+      "eval_name": "edge-multi-topic-document",
+      "prompt": "摄取包含3个以上独立主题的文档",
+      "expected_output": "为每个主题创建独立的 summary",
+      "assertions": [
+        {"type": "output_contains", "pattern": "summary"}
+      ]
+    },
+    {
+      "id": 25,
+      "eval_name": "edge-project-priority-location",
+      "prompt": "在已有 ./wiki 目录的项目中运行 /wiki init",
+      "expected_output": "优先使用现有 ./wiki，不创建新目录",
+      "assertions": [
+        {"type": "output_contains", "pattern": "./wiki|已有"}
+      ]
     }
   ]
 }
