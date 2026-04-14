@@ -1,5 +1,5 @@
 ---
-name: code-wiki:init
+name: wiki:init
 description: 初始化 Code Wiki 目录结构（项目优先）
 ---
 

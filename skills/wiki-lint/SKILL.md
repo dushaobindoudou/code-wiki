@@ -1,5 +1,5 @@
 ---
-name: code-wiki:lint
+name: wiki:lint
 description: Code Wiki 健康检查，包括知识图谱一致性验证
 ---
 

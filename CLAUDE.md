@@ -11,12 +11,14 @@ This is an LLM Wiki skill project - a personal/team knowledge base system built 
 The skill uses a main skill + sub-skill pattern:
 
 ```
-llm-wiki (main entry)
-├── llm-wiki:init       # Initialize wiki structure
-├── llm-wiki:ingest     # Ingest source documents
-├── llm-wiki:query      # Query and chat
-├── llm-wiki:lint       # Health checks
-└── llm-wiki:schema    # Schema management (optional)
+code-wiki (main entry)
+├── wiki:init       # Initialize wiki structure
+├── wiki:ingest     # Ingest source documents
+├── wiki:query      # Query and chat
+├── wiki:lint       # Health checks
+├── wiki:insight    # Create insights/synthesis
+├── wiki:visualize  # Visualize knowledge graph
+└── wiki:schema    # Schema management (optional)
 ```
 
 Wiki directory structure (user-specified or default `~/wiki`):

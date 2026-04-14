@@ -1,5 +1,5 @@
 ---
-name: code-wiki:query
+name: wiki:query
 description: 查询 Code Wiki 知识库并对话，强化存回维基功能
 ---
 

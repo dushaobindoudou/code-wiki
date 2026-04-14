@@ -1,5 +1,5 @@
 ---
-name: code-wiki:schema
+name: wiki:schema
 description: 管理 Code Wiki 行为规范（CLAUDE.md）
 ---
 

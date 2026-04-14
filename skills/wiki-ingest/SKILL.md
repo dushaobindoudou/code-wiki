@@ -1,5 +1,5 @@
 ---
-name: code-wiki:ingest
+name: wiki:ingest
 description: 将源文档摄取到 Code Wiki，每次触达 10-15 个页面
 ---
 

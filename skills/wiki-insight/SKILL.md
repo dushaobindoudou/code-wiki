@@ -1,5 +1,5 @@
 ---
-name: code-wiki:insight
+name: wiki:insight
 description: 手动创建洞察/综合分析页面（支持中文：洞察、综合）
 ---
 
